@@ -29,6 +29,6 @@ public class DisplayObject {
 		float angle = (float) (Math.atan2(Math.sin(Math.toRadians(this.pos)), Math.cos(Math.toRadians(this.pos))) - Math.atan2(Math.sin(Math.toRadians(direction)), Math.cos(Math.toRadians(direction))));
 		int deltaPix = Math.round((float) Math.toDegrees(angle)*pixelsPerAngle);
 		
-		c.drawBitmap(this.img, display.getWidth()/2+deltaPix, display.getHeight()/2-img.getHeight()/2, p);
+		c.drawBitmap(this.img, display.getWidth()/2+deltaPix-img.getWidth()/2, display.getHeight()/2-img.getHeight()/2, p);
 	}
 }
