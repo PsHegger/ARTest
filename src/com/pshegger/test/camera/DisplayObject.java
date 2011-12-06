@@ -26,9 +26,8 @@ public class DisplayObject {
 	public void drawObject(Canvas c, float direction) {
 		Paint p = new Paint();
 		float pixelsPerAngle = this.display.getWidth()/50;
-		int deltaPix = Math.round(Math.abs(direction-this.pos)*pixelsPerAngle);
-		if (direction > this.pos)
-			deltaPix *= -1;
+		float angle = (float) (Math.atan2(Math.sin(Math.toRadians(this.pos)), Math.cos(Math.toRadians(this.pos))) - Math.atan2(Math.sin(Math.toRadians(direction)), Math.cos(Math.toRadians(direction))));
+		int deltaPix = Math.round((float) Math.toDegrees(angle)*pixelsPerAngle);
 		
 		c.drawBitmap(this.img, display.getWidth()/2+deltaPix, display.getHeight()/2-img.getHeight()/2, p);
 	}
