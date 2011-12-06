@@ -66,6 +66,12 @@ public class CameraOverlay extends View {
 		
 		Paint p = new Paint();
 		
+		// Draw Objects
+		for (int i=0; i<objects.size(); i++) {
+			DisplayObject obj = (DisplayObject) objects.elementAt(i);
+			obj.drawObject(canvas, direction);
+		}
+		
 		// Draw the menu
 		p.setARGB(200, 150, 150, 150);
 		canvas.drawRect(0, 0, maxWidth+10, height, p);
@@ -76,12 +82,6 @@ public class CameraOverlay extends View {
 			new_y += bmp.getHeight();
 			if (bmp.getWidth() > maxWidth)
 				maxWidth = bmp.getWidth();
-		}
-		
-		// Draw Objects
-		for (int i=0; i<objects.size(); i++) {
-			DisplayObject obj = (DisplayObject) objects.elementAt(i);
-			obj.drawObject(canvas, direction);
 		}
 		
 		p.setARGB(255, 255, 0, 0);
