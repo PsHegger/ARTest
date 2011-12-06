@@ -3,6 +3,8 @@ package com.pshegger.test.camera;
 import java.util.Vector;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.hardware.Sensor;
@@ -19,7 +21,10 @@ public class CameraOverlay extends View {
 	private Context ctx;
 	private float direction;
 	public static SensorManager sensorMan;
+	private int[] menuItems = {R.drawable.ic_launcher, R.drawable.android, R.drawable.chrome, R.drawable.gear, R.drawable.ubuntu};
 	private Vector<DisplayObject> objects;
+	private int maxWidth;
+	private int currentImg;
 	
 	public CameraOverlay(Context context) {
 		super(context);
@@ -29,6 +34,8 @@ public class CameraOverlay extends View {
 		sensorMan = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
 		sensorMan.registerListener(listener, sensorMan.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_FASTEST);
 		objects = new Vector<DisplayObject>();
+		maxWidth = 0;
+		currentImg = R.drawable.ic_launcher;
 		
 		// Add as many objects as you want
 		objects.addElement(new DisplayObject(ctx, R.drawable.ic_launcher, 42));
@@ -36,8 +43,20 @@ public class CameraOverlay extends View {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		objects.addElement(new DisplayObject(ctx, R.drawable.ic_launcher, Math.round(direction)));
-		return super.onTouchEvent(event);
+		if (event.getAction() != MotionEvent.ACTION_DOWN)
+			return false;
+		
+		int new_y = 10;
+		for (int i=0; i<menuItems.length; i++) {
+			Bitmap bmp = BitmapFactory.decodeResource(ctx.getResources(), menuItems[i]);
+			if (event.getX() < bmp.getWidth() && event.getY() > new_y && event.getY() < new_y+bmp.getHeight()) {
+				currentImg = menuItems[i];
+			}
+			new_y += bmp.getHeight();
+		}
+		
+		objects.addElement(new DisplayObject(ctx, currentImg, Math.round(direction)));
+		return true;
 	}
 
 	@Override
@@ -46,6 +65,18 @@ public class CameraOverlay extends View {
 		int height = display.getHeight();
 		
 		Paint p = new Paint();
+		
+		// Draw the menu
+		p.setARGB(200, 150, 150, 150);
+		canvas.drawRect(0, 0, maxWidth+10, height, p);
+		int new_y = 10;
+		for (int i=0; i<menuItems.length; i++) {
+			Bitmap bmp = BitmapFactory.decodeResource(ctx.getResources(), menuItems[i]);
+			canvas.drawBitmap(bmp, 5, new_y, p);
+			new_y += bmp.getHeight();
+			if (bmp.getWidth() > maxWidth)
+				maxWidth = bmp.getWidth();
+		}
 		
 		// Draw Objects
 		for (int i=0; i<objects.size(); i++) {
